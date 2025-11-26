@@ -4,17 +4,19 @@ WIDTH=500
 ship=Actor('ship.png')
 ship.x=(250)    
 ship.y=(400)
-
+score=0
 x=(50)    
 y=(50)
 bullets=[]
 aliens=[]
-
-for i in range(5):
-    alien=Actor('wasp.png')
-    aliens.append(alien)
-    x=x+70
-    aliens[-1].x=x
+for row in range(5):
+    x = 50
+    y=y-100
+    for i in range(5):
+        alien=Actor('wasp.png')
+        aliens.append(alien)
+        x=x+70
+        aliens[-1].x=x
     
 def draw():
     screen.clear()
@@ -46,4 +48,5 @@ def update():
         for bullet in bullets:
             if bullet.colliderect(alien) and len(aliens)>0:
                 aliens.remove(alien)
+                score=score+1
 pgzrun.go()        
