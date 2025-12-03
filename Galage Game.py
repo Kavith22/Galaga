@@ -1,55 +1,82 @@
 import pgzrun
 HEIGHT=500
 WIDTH=500
+
 ship=Actor('ship.png')
-ship.x=(250)    
-ship.y=(400)
+ship.x=250
+ship.y=400
+
 score=0
-x=(50)    
-y=(50)
+game_over = False    
+
 bullets=[]
 aliens=[]
+
+x=50
+y=50
+
 for row in range(5):
     for i in range(5):
         alien=Actor('wasp.png')
-        aliens.append(alien)
         alien.y=y
         x=x+70
-        aliens[-1].x=x
+        alien.x=x
+        aliens.append(alien)
     x=50
     y=y-50
-    
+
 def draw():
     screen.clear()
     screen.fill('#414640')
+
+    if game_over:    
+        screen.draw.text("GAME OVER", center=(250,250), fontsize=60, color="red")
+        return
+
     ship.draw()
     for bullet in bullets:
         bullet.draw()
     for alien in aliens:
         alien.draw()
     screen.draw.text(str(score),(10,10))
-                                 
 
 def update():
-    global score
+    global score, game_over
+
+    if game_over:    
+        return
+
     if keyboard.left:
-        ship.x=ship.x-4
+        ship.x -= 4
     if keyboard.right:
-        ship.x=ship.x+4
+        ship.x += 4
+
     if keyboard.space:
         bullet=Actor('bullet.png')
-        bullet.x=(ship.x)
-        bullet.y=(ship.y-43)
+        bullet.x=ship.x
+        bullet.y=ship.y-43
         if len(bullets)<=1:
             bullets.append(bullet)
-    for i in bullets:
-        i.y=i.y-5
-        if i.y<0:
-            bullets.remove(i)
-    for alien in aliens:
-        alien.y=alien.y+0.7 
-        for bullet in bullets:
-            if bullet.colliderect(alien) and len(aliens)>0:
+
+
+    for b in bullets[:]:   
+        b.y -= 5
+        if b.y < 0:
+            bullets.remove(b)
+
+
+    for alien in aliens[:]:  
+        alien.y += 0.7
+
+        if alien.colliderect(ship):  
+            game_over = True
+
+        
+        for b in bullets[:]:
+            if b.colliderect(alien):
                 aliens.remove(alien)
-                score=score+1
-pgzrun.go()        
+                bullets.remove(b)
+                score += 1
+                break
+
+pgzrun.go()
